@@ -1,6 +1,8 @@
 services:
   api:
-    image: hello-world-go
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
       - "8080:8080"
     env_file:
@@ -11,6 +13,18 @@ services:
       - myapp-network
     depends_on:
       - db
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    develop:
+      watch:
+        - path: ./main.go
+          target: /go
+          action: rebuild
+
   db:
     image: postgres
     ports:
@@ -21,18 +35,15 @@ services:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - myapp-network
-  nginx:
-    image: nginx
-    ports:
-      - "80:80"
-    networks:
-      - myapp-network
-    depends_on:
-      - api
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 volumes:
   mydata:
   postgres_data:
+
 networks:
   myapp-network:
-
-
+    driver: bridge 
