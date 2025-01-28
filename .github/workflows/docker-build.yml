@@ -30,6 +30,6 @@ jobs:
           context: .
           push: true
           tags: |
-            ghcr.io/mischelll/Advent-of-Docker:latest
-            ghcr.io/mischelll/Advent-of-Docker:${{ github.sha }}
+            ghcr.io/mischelll/advent-of-docker:latest
+            ghcr.io/mischelll/advent-of-docker:${{ github.sha }}
 
